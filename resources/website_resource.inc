@@ -3,14 +3,16 @@
 
 /**
  * Updates a website
- * @params Array website data : website_nid,hostname,site_email,node_data
+ * @param $website_nid
+ * @param $website_data
+ *    Array website data : website_nid,hostname,site_email,node_data
  * @return Array result success
  *
  */
-function _webfact_api_website_update($website_data) {
+function _webfact_api_website_update($website_nid,$website_data) {
 
   //get the node
-  $website_node = node_load($website_data['website_nid']);
+  $website_node = node_load($website_nid);
 
   //check node is valid
   if (!$website_node) {

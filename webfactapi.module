@@ -62,6 +62,13 @@ function webfactapi_services_resources() {
           'callback' => '_webfact_api_website_update',
           'args' => array(
             array(
+              'name' => 'nid',
+              'optional' => FALSE,
+              'source' => array('path' => 0),
+              'type' => 'int',
+              'description' => 'The nid of the node to get',
+            ),
+            array(
               'name' => 'website data',
               'optional' => FALSE,
               'source' => 'data',
@@ -110,13 +117,7 @@ function _webfact_api_website_resource_access($op = 'view', $args = array()) {
     }
   }
   elseif ($op == 'update') {
-    //check all required data is present
-    $created_required_data = array('website_nid');
-    foreach ($created_required_data as $required_data) {
-      if (!array_key_exists($required_data, $args[0]) || !$args[0][$required_data]) {
-        return services_error(t($required_data . ' is required'), 406);
-      }
-    }
+
   }
   return TRUE;
 }

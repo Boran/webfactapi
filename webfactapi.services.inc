@@ -7,7 +7,7 @@
 /**
  * Implements hook_default_services_endpoint().
  */
-function webfact_api_default_services_endpoint() {
+function webfactapi_default_services_endpoint() {
   $export = array();
 
   $endpoint = new stdClass();

@@ -14,13 +14,20 @@ $result = drupal_http_request('http://website-url/webfact_api/website/*nid*', $o
 
 Retrieve all websites :
 
+$data = array('field_public'=>1);
+
+$retrieve_data = json_encode($data);
+
 $options = array(
     'method' => 'GET',
+    'data' => $retrieve_data,
     'timeout' => 15,
     'headers' => array('Content-Type' => 'application/json'),
 );
 
-$result = drupal_http_request('http://website/webfact_api/website/', $options);
+$result = drupal_http_request('http://website/webfact_api/website*', $options);
+
+*optional filter by field eg ?parameters[field_public]=0
 
 ***********************************************************
 

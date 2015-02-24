@@ -155,9 +155,10 @@ function _generate_website_resource($node) {
 
   foreach ($website_fields as $website_field => $website_field_title) {
     $field = field_get_items('node', $node, $website_field);
-    $output = field_view_value('node', $node, $website_field, $field[0]);
-    if (isset($output['#markup'])) {
-      $website->{$website_field_title} = $output['#markup'];
+    //field_view_value not used as boolean not coming through
+    $value = $field[0]["value"];
+    if ($value) {
+      $website->{$website_field_title} = $value;
     }
   }
 

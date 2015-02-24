@@ -239,3 +239,12 @@ function _webfact_api_website_resource_access($op = 'view', $args = array()) {
   return TRUE;
 }
 
+/**
+ * Implements function hook_rest_server_headers_parsed_alter
+ * TODO - check this is ok
+ */
+function webfactapi_rest_server_headers_parsed_alter(&$headers) {
+  drupal_add_http_header('Access-Control-Allow-Origin','*');
+  //below isn't working
+  //$headers['access-control-allow-origin'] = "*";
+}

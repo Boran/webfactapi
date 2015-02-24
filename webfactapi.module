@@ -6,6 +6,21 @@
 
 include_once 'webfactapi.features.inc';
 
+/** Implements hook_menu */
+function webfactapi_menu(){
+
+  $items = array();
+
+  $items['webfactapi/test/%/%'] = array(
+    'page callback'    => 'webfactapi_test',
+    'page arguments'   => array(2,3),
+    'access arguments' => array('access websites'),
+    'type' => MENU_CALLBACK, // no menu
+  );
+
+  return $items;
+
+}
 /**
  * Implements hook_services_resources
  * @return array
@@ -15,7 +30,11 @@ function webfactapi_services_resources() {
     'website' => array(
       'operations' => array(
         'retrieve' => array(
-          'file' => array('type' => 'inc', 'module' => 'webfactapi', 'name' => 'resources/website_resource'),
+          'file' => array(
+            'type' => 'inc',
+            'module' => 'webfactapi',
+            'name' => 'resources/website_resource'
+          ),
           'callback' => '_webfact_api_website_retrieve',
           'args' => array(
             array(
@@ -31,34 +50,33 @@ function webfactapi_services_resources() {
           'access arguments append' => TRUE,
         ),
         'index' => array(
-          'file' => array('type' => 'inc', 'module' => 'webfactapi', 'name' => 'resources/website_resource'),
+          'file' => array(
+            'type' => 'inc',
+            'module' => 'webfactapi',
+            'name' => 'resources/website_resource'
+          ),
           'callback' => '_webfact_api_website_retrieve_all',
           'args' => array(
-            array(
-              'name' => 'page',
-              'type' => 'int',
-              'description' => '',
-              'source' => array(
-                'param' => 'page',
-              ),
-              'optional' => TRUE,
-              'default value' => 0,
-            ),
+
             array(
               'name' => 'parameters',
-              'type' => 'array',
-              'description' => '',
-              'source' => 'param',
               'optional' => TRUE,
+              'type' => 'array',
+              'description' => 'Parameters array',
               'default value' => array(),
-            )
+              'source' => array('param' => 'parameters'),
+            ),
           ),
           'access callback' => '_webfact_api_website_resource_access',
           'access arguments' => array('view'),
           'access arguments append' => TRUE,
         ),
         'update' => array(
-          'file' => array('type' => 'inc', 'module' => 'webfactapi', 'name' => 'resources/website_resource'),
+          'file' => array(
+            'type' => 'inc',
+            'module' => 'webfactapi',
+            'name' => 'resources/website_resource'
+          ),
           'callback' => '_webfact_api_website_update',
           'args' => array(
             array(
@@ -81,7 +99,11 @@ function webfactapi_services_resources() {
           'access arguments append' => TRUE,
         ),
         'create' => array(
-          'file' => array('type' => 'inc', 'module' => 'webfactapi', 'name' => 'resources/website_resource'),
+          'file' => array(
+            'type' => 'inc',
+            'module' => 'webfactapi',
+            'name' => 'resources/website_resource'
+          ),
           'callback' => '_webfact_api_website_create',
           'args' => array(
             array(
@@ -104,12 +126,70 @@ function webfactapi_services_resources() {
   return $webfact_website_resource;
 }
 
+/**
+ * Test page call back
+ */
+function webfactapi_test($test,$param){
+
+  switch($test){
+
+    case "websites-public" :
+
+
+      $options = array(
+        'method' => 'GET',
+        'timeout' => 15,
+        'headers' => array('Content-Type' => 'application/json'),
+      );
+
+      $result = drupal_http_request('http://webfact.dev.webscope.loc/webfact_api/website?parameters[field_public]=1', $options);
+
+      krumo($result);
+
+      krumo(json_decode($result->data));
+
+      return $result->data;
+
+      break;
+
+    case "website-update" :
+
+      $data = array('public'=>1);
+
+      $update_data = json_encode($data);
+
+      $options = array(
+        'method' => 'PUT',
+        'data' => $update_data,
+        'timeout' => 15,
+        'headers' => array('Content-Type' => 'application/json'),
+      );
+
+      $result = drupal_http_request('http://webfact.dev.webscope.loc/webfact_api/website/'.$param, $options);
+
+      krumo($result);
+
+      krumo(json_decode($result->data));
+
+      return $result->data;
+
+      break;
+  }
+
+}
+
+
 /** Access callback */
 function _webfact_api_website_resource_access($op = 'view', $args = array()) {
 
   if ($op == 'create') {
     //check all required data is present
-    $created_required_data = array('hostname', 'site_email', 'node_title');
+    $created_required_data = array(
+      'hostname',
+      'site_email',
+      'node_title',
+      'public'
+    );
     foreach ($created_required_data as $required_data) {
       if (!array_key_exists($required_data, $args[0]) || !$args[0][$required_data]) {
         return services_error(t($required_data . ' is required'), 406);

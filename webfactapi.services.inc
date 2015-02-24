@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * webfact_api.services.inc
+ * webfactapi.services.inc
  */
 
 /**
@@ -35,29 +35,24 @@ function webfactapi_default_services_endpoint() {
     ),
   );
   $endpoint->resources = array(
-    'create_website' => array(
+    'website' => array(
       'operations' => array(
+        'retrieve' => array(
+          'enabled' => '1',
+        ),
+        'index' => array(
+          'enabled' => '1',
+        ),
+        'update' => array(
+          'enabled' => '1',
+        ),
         'create' => array(
           'enabled' => '1',
         ),
       ),
     ),
-    'get_website' => array(
-      'operations' => array(
-        'retrieve' => array(
-          'enabled' => '1',
-        ),
-      ),
-    ),
-    'update_website' => array(
-      'operations' => array(
-        'update' => array(
-          'enabled' => '1',
-        ),
-      ),
-    ),
   );
-  $endpoint->debug = 0;
+  $endpoint->debug = 1;
   $export['webfact_api'] = $endpoint;
 
   return $export;

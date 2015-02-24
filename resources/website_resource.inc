@@ -77,8 +77,6 @@ function _webfact_api_website_create($website_data) {
  */
 function _webfact_api_website_retrieve_all($parameters) {
 
-  var_dump($parameters);
-
   //create base query
   $query = new EntityFieldQuery();
   $query->entityCondition('entity_type', 'node')

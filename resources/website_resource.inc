@@ -62,6 +62,7 @@ function _webfact_api_website_create($website_data) {
   $node->field_hostname['und'][0]['value'] = $website_data['hostname'];
   $node->field_site_email['und'][0]['value'] = $website_data['site_email'];
   $node->field_public['und'][0]['value'] = $website_data['public'];
+  $node->field_site_owner_uid['und'][0]['value'] = $website_data['owner_uid'];
   $node->field_template['und'][0]['target_id'] = $template_nid;
   //save node
   node_save($node);
@@ -151,6 +152,7 @@ function _generate_website_resource($node) {
     'field_docker_restartpolicy' => 'restart policy',
     'field_template' => 'template',
     'field_public' => 'public',
+    'field_site_owner_uid' => 'owner_uid',
   );
 
   foreach ($website_fields as $website_field => $website_field_title) {
@@ -158,10 +160,10 @@ function _generate_website_resource($node) {
     //field_view_value not used as boolean not coming through
     $value = $field[0]["value"];
     $website->{$website_field_title} = $value;
-
   }
 
+  //website url
+  $website->url = $website->hostname.".comingsoon.com";
+
   return $website;
-
-
 }

@@ -163,7 +163,8 @@ function _generate_website_resource($node) {
   }
 
   //website url
-  $website->url = $website->hostname.".comingsoon.com";
+  $webfact_server   = variable_get('webfact_fserver', 'mywildcard.example.ch');
+  $website->url = $website->hostname.".".$webfact_server;
 
   return $website;
 }

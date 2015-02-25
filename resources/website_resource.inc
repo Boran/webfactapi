@@ -157,9 +157,8 @@ function _generate_website_resource($node) {
     $field = field_get_items('node', $node, $website_field);
     //field_view_value not used as boolean not coming through
     $value = $field[0]["value"];
-    if ($value) {
-      $website->{$website_field_title} = $value;
-    }
+    $website->{$website_field_title} = $value;
+
   }
 
   return $website;

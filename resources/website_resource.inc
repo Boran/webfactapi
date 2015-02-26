@@ -37,6 +37,7 @@ function _webfact_api_website_update($website_nid, $website_data) {
   //save node
   node_save($website_node);
 
+
   //return result
   return array('result' => 1);
 }
@@ -53,6 +54,7 @@ function _webfact_api_website_create($website_data) {
   //get the default template
   $templates = node_load_multiple(array(), array('type' => 'template'));
   $template_nid = reset($templates)->nid;
+
   //create website node
   $node = new stdClass();
   $node->type = 'website';
@@ -64,8 +66,16 @@ function _webfact_api_website_create($website_data) {
   $node->field_public['und'][0]['value'] = $website_data['public'];
   $node->field_site_owner_uid['und'][0]['value'] = $website_data['owner_uid'];
   $node->field_template['und'][0]['target_id'] = $template_nid;
+
   //save node
   node_save($node);
+
+  //spin up the container
+  $w = new WebfactController();
+  if ($w) {
+    $w->apiCreateWebsiteContainer($node->nid);
+  }
+
   //return result and nid of created website node
   return array('result' => 1, 'website_nid' => $node->nid);
 
@@ -158,7 +168,7 @@ function _generate_website_resource($node) {
   foreach ($website_fields as $website_field => $website_field_title) {
     $field = field_get_items('node', $node, $website_field);
     //field_view_value not used as boolean not coming through
-    $value = $field[0]["value"];
+    $value = isset($field[0]["value"]) ? $field[0]["value"] : NULL;
     $website->{$website_field_title} = $value;
   }
 

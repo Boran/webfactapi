@@ -7,13 +7,13 @@
 include_once 'webfactapi.features.inc';
 
 /** Implements hook_menu */
-function webfactapi_menu(){
+function webfactapi_menu() {
 
   $items = array();
 
   $items['webfactapi/test/%/%'] = array(
-    'page callback'    => 'webfactapi_test',
-    'page arguments'   => array(2,3),
+    'page callback' => 'webfactapi_test',
+    'page arguments' => array(2, 3),
     'access arguments' => array('access websites'),
     'type' => MENU_CALLBACK, // no menu
   );
@@ -21,6 +21,7 @@ function webfactapi_menu(){
   return $items;
 
 }
+
 /**
  * Implements hook_services_resources
  * @return array
@@ -129,11 +130,11 @@ function webfactapi_services_resources() {
 /**
  * Test page call back
  */
-function webfactapi_test($test,$param){
+function webfactapi_test($test, $param) {
 
   $domain = 'webfact.webscope.dev.loc';
 
-  switch($test){
+  switch ($test) {
 
     case "websites" :
 
@@ -173,7 +174,13 @@ function webfactapi_test($test,$param){
 
     case "website-create" :
 
-      $data = array('node_title'=>'xxxxx node title','hostname'=>'yyyyyy','site_email'=>'gggggg@test.com','public'=>1);
+      $data = array(
+        'node_title' => 'wutang',
+        'hostname' => 'wutang2',
+        'site_email' => 'gggggg@test.com',
+        'public' => 1,
+        'owner_uid'  => 666,
+      );
       $create_data = json_encode($data);
 
       $options = array(
@@ -185,11 +192,20 @@ function webfactapi_test($test,$param){
 
       $result = drupal_http_request("http://$domain/webfact_api/website", $options);
 
+      $result_data = json_decode($result->data);
+
+      $new_website_nid =  $result_data->website_nid;
+
+      $w = new WebfactController('admin');
+      if ($w) {
+        $w->arguments('create', $new_website_nid,0);
+      }
+
       break;
 
     case "website-update" :
 
-      $data = array('hostname'=>'newguy');
+      $data = array('hostname' => 'newguy');
 
       $update_data = json_encode($data);
 
@@ -200,8 +216,7 @@ function webfactapi_test($test,$param){
         'headers' => array('Content-Type' => 'application/json'),
       );
 
-      $result = drupal_http_request("http://$domain/webfact_api/website/".$param, $options);
-
+      $result = drupal_http_request("http://$domain/webfact_api/website/" . $param, $options);
 
 
       break;
@@ -244,7 +259,7 @@ function _webfact_api_website_resource_access($op = 'view', $args = array()) {
  * TODO - check this is ok
  */
 function webfactapi_rest_server_headers_parsed_alter(&$headers) {
-  drupal_add_http_header('Access-Control-Allow-Origin','*');
+  drupal_add_http_header('Access-Control-Allow-Origin', '*');
   //below isn't working
   //$headers['access-control-allow-origin'] = "*";
 }

@@ -72,7 +72,7 @@ function _webfact_api_website_create($website_data) {
   //spin up the container
   $w = new WebfactController(1);
   if ($w) {
-    $w->arguments('create',$node->nid);
+    $w->arguments('create',$node->nid,0);
   }
 
   //return result and nid of created website node

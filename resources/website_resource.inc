@@ -37,7 +37,6 @@ function _webfact_api_website_update($website_nid, $website_data) {
   //save node
   node_save($website_node);
 
-
   //return result
   return array('result' => 1);
 }
@@ -71,14 +70,13 @@ function _webfact_api_website_create($website_data) {
   node_save($node);
 
   //spin up the container
-  $w = new WebfactController();
+  $w = new WebfactController(1);
   if ($w) {
-    $w->apiCreateWebsiteContainer($node->nid);
+    $w->arguments('create',$node->nid);
   }
 
   //return result and nid of created website node
   return array('result' => 1, 'website_nid' => $node->nid);
-
 }
 
 /**

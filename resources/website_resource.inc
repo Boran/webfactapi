@@ -3,9 +3,8 @@
 
 /**
  * Updates a website
- * @param $website_nid
- * @param $website_data
- *    Array website data : website_nid,hostname,site_email,node_data
+ * @param String $website_nid
+ * @param Array $website_data
  * @return Array result success
  *
  */
@@ -20,7 +19,7 @@ function _webfact_api_website_update($website_nid, $website_data) {
   }
 
   //update website node
-  $website_update_fields = array('hostname'=>'field_hostname', 'site_email'=>'field_site_email', 'public'=>'field_public');
+  $website_update_fields = array('hostname'=>'field_hostname', 'site_email'=>'field_site_email', 'public'=>'field_public', 'owner_uid'=>'field_site_owner_uid');
 
   //loop through possible updatable website fields
   foreach ($website_update_fields as $website_update_field_key =>$website_update_field_name) {
@@ -43,8 +42,7 @@ function _webfact_api_website_update($website_nid, $website_data) {
 
 /**
  * Creates a website
- * @param $website_data
- * Array website data : hostname,site_email,node_data
+ * @param Array $website_data
  * @return Array result success, website node created nid
  *
  */
@@ -112,7 +110,6 @@ function _webfact_api_website_retrieve_all($parameters) {
 
 /**
  * Returns a website
- *
  */
 function _webfact_api_website_retrieve($nid) {
 
@@ -126,7 +123,7 @@ function _webfact_api_website_retrieve($nid) {
 }
 
 /**
- * Helper fucntion to generate website object ready for service return
+ * Helper function to generate website object ready for service return
  * @param $node
  * @return \stdClass
  */
@@ -171,7 +168,7 @@ function _generate_website_resource($node) {
   }
 
   //website url
-  $webfact_server   = variable_get('webfact_fserver', 'mywildcard.example.ch');
+  $webfact_server = variable_get('webfact_fserver', 'mywildcard.example.ch');
   $website->url = $website->hostname.".".$webfact_server;
 
   return $website;

@@ -1,6 +1,61 @@
 Exposes an api to interact with website nodes
 
-Retrieve specific website :
+API specifications :
+
+    GET request - *webfactory_url*/webfact_api/website.json(all website), *webfactory_url*/webfact_api/website/*nid*.json (one website)
+        Provides the index and retrieve website functionality
+        Websites items each contain :
+
+            node_id
+
+            node_title
+
+            status
+
+            hostname
+
+            site_email
+
+            category
+
+            restart_policy
+
+            template
+
+            public
+
+            owner_uid
+
+            url
+
+    PUT request webfactory_url*/webfact_api/website/*nid_to_update*.
+        Provides update functionality, request can provide the following variables
+
+            node_title
+
+            hostname
+
+            site_email
+
+            public
+
+            owner_uid
+
+    POST request webfactory_url*/webfact_api/website
+        Provides craete functionality, request needs to provide the following variables
+
+            node_title
+
+            hostname
+
+            site_email
+
+            public
+
+            owner_uid
+
+
+API usage examples :
 
 $options = array(
     'method' => 'GET',
@@ -33,7 +88,7 @@ $result = drupal_http_request('http://website/webfact_api/website*', $options);
 
 Update website :
 
-$data = array('node_title'=>'xxxxx node title','hostname'=>'yyyyyy','site_email'=>'gggggg@test.com');
+$data = array('node_title'=>'xxxxx node title','hostname'=>'yyyyyy','site_email'=>'gggggg@test.com','public'=>0,'owner_uid'=>27);
 
 $update_data = json_encode($data);
 
@@ -50,7 +105,7 @@ $result = drupal_http_request('http://website/webfact_api/website/*nid*', $optio
 
 Create website :
 
-$data = array('node_title'=>'xxxxx node title','hostname'=>'yyyyyy','site_email'=>'gggggg@test.com');
+$data = array('node_title'=>'xxxxx node title','hostname'=>'yyyyyy','site_email'=>'gggggg@test.com','public'=>1,'owner_uid'=>12);
 
 $create_data = json_encode($data);
 

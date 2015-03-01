@@ -22,6 +22,30 @@ function webfactapi_menu() {
 
 }
 
+/** Access callback */
+function _webfact_api_website_resource_access($op = 'view', $args = array()) {
+
+  if ($op == 'create') {
+    //check all required data is present
+    $created_required_data = array(
+      'hostname',
+      'site_email',
+      'node_title',
+      'public',
+      'owner_uid'
+    );
+    foreach ($created_required_data as $required_data) {
+      if (!array_key_exists($required_data, $args[0]) || !$args[0][$required_data]) {
+        return services_error(t($required_data . ' is required'), 406);
+      }
+    }
+  }
+  elseif ($op == 'update') {
+
+  }
+  return TRUE;
+}
+
 /**
  * Implements hook_services_resources
  * @return array
@@ -133,7 +157,7 @@ function webfactapi_services_resources() {
 function webfactapi_test($test, $param) {
 
   global $base_url;
-  
+
 
   switch ($test) {
 
@@ -176,11 +200,11 @@ function webfactapi_test($test, $param) {
     case "website-create" :
 
       $data = array(
-        'node_title' => 'wutang4',
-        'hostname' => 'wutang4',
+        'node_title' => 'AFDSFDS',
+        'hostname' => 'fdsafdsae',
         'site_email' => 'gggggg@test.com',
         'public' => 1,
-        'owner_uid' => 666,
+        'owner_uid' => 6,
       );
       $create_data = json_encode($data);
 
@@ -232,35 +256,13 @@ function webfactapi_test($test, $param) {
 }
 
 
-/** Access callback */
-function _webfact_api_website_resource_access($op = 'view', $args = array()) {
-
-  if ($op == 'create') {
-    //check all required data is present
-    $created_required_data = array(
-      'hostname',
-      'site_email',
-      'node_title',
-      'public'
-    );
-    foreach ($created_required_data as $required_data) {
-      if (!array_key_exists($required_data, $args[0]) || !$args[0][$required_data]) {
-        return services_error(t($required_data . ' is required'), 406);
-      }
-    }
-  }
-  elseif ($op == 'update') {
-
-  }
-  return TRUE;
-}
-
 /**
  * Implements function hook_rest_server_headers_parsed_alter
- * TODO - check this is ok
+ * For the time being allow CORS from any domain
  */
 function webfactapi_rest_server_headers_parsed_alter(&$headers) {
   drupal_add_http_header('Access-Control-Allow-Origin', '*');
   //below isn't working
-  //$headers['access-control-allow-origin'] = "*";
+  //$headers['Access-Control-Allow-Origin'] = "*";
 }
+

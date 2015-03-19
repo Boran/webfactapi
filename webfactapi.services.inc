@@ -15,7 +15,7 @@ function webfactapi_default_services_endpoint() {
   $endpoint->api_version = 3;
   $endpoint->name = 'webfact_api';
   $endpoint->server = 'rest_server';
-  $endpoint->path = 'webfact_api';
+  $endpoint->path = 'webfact';
   $endpoint->authentication = array();
   $endpoint->server_settings = array(
     'formatters' => array(
@@ -52,7 +52,7 @@ function webfactapi_default_services_endpoint() {
       ),
     ),
   );
-  $endpoint->debug = 1;
+  $endpoint->debug = 0;
   $export['webfact_api'] = $endpoint;
 
   return $export;

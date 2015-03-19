@@ -2,7 +2,7 @@ Exposes an api to interact with website nodes
 
 API specifications :
 
-    GET request - *webfactory_url*/webfact_api/website.json(all website), *webfactory_url*/webfact_api/website/*nid*.json (one website)
+    GET request - *webfactory_url*/webfact/website.json(all website), *webfactory_url*/webfact/website/*nid*.json (one website)
         Provides the index and retrieve website functionality
         Websites items each contain :
 
@@ -28,7 +28,7 @@ API specifications :
 
             url
 
-    PUT request webfactory_url*/webfact_api/website/*nid_to_update*.
+    PUT request webfactory_url*/webfact/website/*nid_to_update*.
         Provides update functionality, request can provide the following variables
 
             node_title
@@ -41,7 +41,7 @@ API specifications :
 
             owner_uid
 
-    POST request webfactory_url*/webfact_api/website
+    POST request webfactory_url*/webfact/website
         Provides craete functionality, request needs to provide the following variables
 
             node_title
@@ -63,7 +63,7 @@ $options = array(
     'headers' => array('Content-Type' => 'application/json'),
 );
 
-$result = drupal_http_request('http://website-url/webfact_api/website/*nid*', $options);
+$result = drupal_http_request('http://website-url/webfact/website/*nid*', $options);
 
 ***********************************************************
 
@@ -80,7 +80,7 @@ $options = array(
     'headers' => array('Content-Type' => 'application/json'),
 );
 
-$result = drupal_http_request('http://website/webfact_api/website*', $options);
+$result = drupal_http_request('http://website/webfact/website*', $options);
 
 *optional filter by field eg ?parameters[field_public]=0
 
@@ -99,7 +99,7 @@ $options = array(
     'headers' => array('Content-Type' => 'application/json'),
 );
 
-$result = drupal_http_request('http://website/webfact_api/website/*nid*', $options);
+$result = drupal_http_request('http://website/webfact/website/*nid*', $options);
 
 ***********************************************************
 
@@ -116,6 +116,6 @@ $options = array(
     'headers' => array('Content-Type' => 'application/json'),
 );
 
-$result = drupal_http_request('http://website/webfact_api/website', $options);
+$result = drupal_http_request('http://website/webfact/website', $options);
 
 ***********************************************************

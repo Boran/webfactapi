@@ -8,6 +8,7 @@ dependencies[] = ctools
 dependencies[] = libraries
 dependencies[] = rest_server
 dependencies[] = services
+dependencies[] = webfact
 features[ctools][] = services:services:3
 features[features_api][] = api:2
 features[services_endpoint][] = webfact_api

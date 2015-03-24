@@ -64,6 +64,16 @@ function _webfact_api_website_create($website_data) {
   $node->field_site_owner_uid['und'][0]['value'] = $website_data['owner_uid'];
   $node->field_template['und'][0]['target_id'] = $template_nid;
 
+  // Passing values and adding final script:
+  // MASTER_URL - site url to update.
+  // OWENER_EMAIL - email address of user to be created.
+  // PRODUCT_ID - id of product to update on master site.
+  // DRUPAL_FINAL_SCRIPT - script to run.
+  $node->field_docker_environment['und'][0]['value'] = 'MASTER_URL=' . $website_data['master_url'];
+  $node->field_docker_environment['und'][1]['value'] = 'OWNER_MAIL=' . $website_data['owner_email'];
+  $node->field_docker_environment['und'][2]['value'] = 'PRODUCT_ID=' . $website_data['product_id'];
+  $node->field_docker_environment['und'][3]['value'] = 'DRUPAL_FINAL_SCRIPT=env_scripts/build_usr.sh';
+
   //save node
   node_save($node);
 

@@ -48,9 +48,13 @@ function _webfact_api_website_update($website_nid, $website_data) {
  */
 function _webfact_api_website_create($website_data) {
 
-  //get the default template
-  $templates = node_load_multiple(array(), array('type' => 'template'));
-  $template_nid = reset($templates)->nid;
+
+  //get the template nid
+  $template_nid = $website_data['template_id'];
+  if($template_nid == ''){
+    $templates = node_load_multiple(array(), array('type' => 'template'));
+    $template_nid = reset($templates)->nid;
+  }
 
   //create website node
   $node = new stdClass();

@@ -161,6 +161,7 @@ function _generate_website_resource($node) {
   $w = new WebfactController;
   if ($w) {
     $website->status = $w->getStatus($node->nid);
+    $website->build_status = $w->getContainerBuildStatus($node->nid);
   }
 
   //Loop through fields to pull from website node

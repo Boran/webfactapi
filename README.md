@@ -11,6 +11,10 @@ API specifications :
             node_title
 
             status
+            
+            build_status
+            
+            container_status
 
             hostname
 

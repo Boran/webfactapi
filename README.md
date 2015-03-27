@@ -80,7 +80,7 @@ $options = array(
     'headers' => array('Content-Type' => 'application/json'),
 );
 
-$result = drupal_http_request('http://website/webfact/website*', $options);
+$result = drupal_http_request('http://website-url/webfact/website*', $options);
 
 *optional filter by field eg ?parameters[field_public]=0
 
@@ -99,7 +99,7 @@ $options = array(
     'headers' => array('Content-Type' => 'application/json'),
 );
 
-$result = drupal_http_request('http://website/webfact/website/*nid*', $options);
+$result = drupal_http_request('http://website-url/webfact/website/*nid*', $options);
 
 ***********************************************************
 
@@ -116,6 +116,6 @@ $options = array(
     'headers' => array('Content-Type' => 'application/json'),
 );
 
-$result = drupal_http_request('http://website/webfact/website', $options);
+$result = drupal_http_request('http://website-url/webfact/website', $options);
 
 ***********************************************************

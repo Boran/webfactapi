@@ -72,11 +72,11 @@ function _webfact_api_website_create($website_data) {
   if (isset($website_data['docker_environment'])) {
     if (is_array($website_data['docker_environment'])) {
       foreach ($website_data['docker_environment'] as $row) {
-        $node->field_docker_environment[LANGUAGE_NONE][] = $row;
+        $node->field_docker_environment[LANGUAGE_NONE][]['value'] = $row;
       }
     }
     else {
-      $node->field_docker_environment[LANGUAGE_NONE][] = $website_data['docker_environment'];
+      $node->field_docker_environment[LANGUAGE_NONE][]['value'] = $website_data['docker_environment'];
     }
   }
 
@@ -84,11 +84,11 @@ function _webfact_api_website_create($website_data) {
   if (isset($website_data['docker_volumes'])) {
     if (is_array($website_data['docker_volumes'])) {
       foreach ($website_data['docker_volumes'] as $row) {
-        $node->field_docker_volumes[LANGUAGE_NONE][] = $row;
+        $node->field_docker_volumes[LANGUAGE_NONE][]['value'] = $row;
       }
     }
     else {
-      $node->field_docker_volumes[LANGUAGE_NONE][] = $website_data['docker_volumes'];
+      $node->field_docker_volumes[LANGUAGE_NONE][]['value'] = $website_data['docker_volumes'];
     }
   }
 

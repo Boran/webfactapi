@@ -63,7 +63,7 @@ function _webfact_api_website_create($website_data) {
   $node->title = $website_data['node_title'];
   $node->language = LANGUAGE_NONE;
   $node->field_hostname['und'][0]['value'] = $website_data['hostname'];
-  $node->field_category['und'][0]['value'] = $website_data['category'];
+  $node->field_category['und'][0]['tid'] = $website_data['category'];
   $node->field_site_email['und'][0]['value'] = $website_data['site_email'];
   $node->field_public['und'][0]['value'] = $website_data['public'];
   $node->field_site_owner_uid['und'][0]['value'] = $website_data['owner_uid'];

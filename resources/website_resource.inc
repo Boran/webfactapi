@@ -19,7 +19,7 @@ function _webfact_api_website_update($website_nid, $website_data) {
   }
 
   //update website node
-  $website_update_fields = array('hostname'=>'field_hostname', 'site_email'=>'field_site_email', 'public'=>'field_public', 'owner_uid'=>'field_site_owner_uid');
+  $website_update_fields = array('hostname'=>'field_hostname', 'category'=>'field_category', 'site_email'=>'field_site_email', 'public'=>'field_public', 'owner_uid'=>'field_site_owner_uid');
 
   //loop through possible updatable website fields
   foreach ($website_update_fields as $website_update_field_key =>$website_update_field_name) {

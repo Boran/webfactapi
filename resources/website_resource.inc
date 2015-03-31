@@ -19,7 +19,7 @@ function _webfact_api_website_update($website_nid, $website_data) {
   }
 
   //update website node
-  $website_update_fields = array('hostname'=>'field_hostname', 'site_email'=>'field_site_email', 'public'=>'field_public', 'owner_uid'=>'field_site_owner_uid');
+  $website_update_fields = array('hostname'=>'field_hostname', 'category'=>'field_category', 'site_email'=>'field_site_email', 'public'=>'field_public', 'owner_uid'=>'field_site_owner_uid');
 
   //loop through possible updatable website fields
   foreach ($website_update_fields as $website_update_field_key =>$website_update_field_name) {
@@ -63,6 +63,7 @@ function _webfact_api_website_create($website_data) {
   $node->title = $website_data['node_title'];
   $node->language = LANGUAGE_NONE;
   $node->field_hostname['und'][0]['value'] = $website_data['hostname'];
+  $node->field_category['und'][0]['value'] = $website_data['category'];
   $node->field_site_email['und'][0]['value'] = $website_data['site_email'];
   $node->field_public['und'][0]['value'] = $website_data['public'];
   $node->field_site_owner_uid['und'][0]['value'] = $website_data['owner_uid'];

@@ -36,6 +36,10 @@ function _webfact_api_website_update($website_nid, $website_data) {
   //save node
   node_save($website_node);
 
+  //run command
+  $w = new WebfactController(1 ,$website_nid);
+  $wresult = $w->runCommand($website_data['command']);
+
   //return result
   return array('result' => 1);
 }

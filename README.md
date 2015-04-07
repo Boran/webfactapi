@@ -11,9 +11,9 @@ API specifications :
             node_title
 
             status
-            
+
             build_status
-            
+
             container_status
 
             hostname
@@ -39,11 +39,15 @@ API specifications :
 
             hostname
 
+            category
+
             site_email
 
             public
 
             owner_uid
+
+            cmd_arguments
 
     POST request webfactory_url*/webfact/website
         Provides craete functionality, request needs to provide the following variables
@@ -93,6 +97,23 @@ $result = drupal_http_request('http://website-url/webfact/website*', $options);
 Update website :
 
 $data = array('node_title'=>'xxxxx node title','hostname'=>'yyyyyy','site_email'=>'gggggg@test.com','public'=>0,'owner_uid'=>27);
+
+$update_data = json_encode($data);
+
+$options = array(
+    'method' => 'PUT',
+    'data' => $update_data,
+    'timeout' => 15,
+    'headers' => array('Content-Type' => 'application/json'),
+);
+
+$result = drupal_http_request('http://website-url/webfact/website/*nid*', $options);
+
+***********************************************************
+
+Run script :
+
+$data = array('cmd_arguments'=>'argument1 argument2');
 
 $update_data = json_encode($data);
 

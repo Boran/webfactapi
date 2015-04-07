@@ -40,7 +40,7 @@ function _webfact_api_website_update($website_nid, $website_data) {
 
   // Script relative to your /var/www/html
   $script_location = variable_get('webfact_script_location', 'env_scripts');
-  $script_name = variable_get('webfact_script_name', 'null');
+  $script_name = variable_get('webfact_script_name', null);
   if (!isset($website_data['cmd_arguments'])) {
     $website_data['cmd_arguments'] = '';
   }

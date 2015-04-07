@@ -36,6 +36,28 @@ function _webfact_api_website_update($website_nid, $website_data) {
   //save node
   node_save($website_node);
 
+  //Adds the posibility to add scripts to your drupal project
+
+  // Script relative to your /var/www/html
+  $script_location = variable_get('webfact_script_location', 'env_scripts');
+  $script_name = variable_get('webfact_script_name', 'null');
+  if (!isset($website_data['cmd_arguments'])) {
+    $website_data['cmd_arguments'] = '';
+  }
+
+  if (isset($script_name)) {
+    // Run the webfact command.
+    $cmd = 'cd /var/www/html/' . $script_location . '; ./' . $script_name . ' ' . $website_data['cmd_arguments'];
+    $w = new WebfactController(1 ,$website_nid);
+    $wresult = $w->runCommand($cmd);
+
+    watchdog('webfactapi', "script called with following cmd:" . $cmd);
+
+  } elseif (isset($website_data['cmd_arguments'])) {
+    $cmd = '';
+    watchdog('webfactapi', "script could not be run, missing script name");
+  }
+
   //return result
   return array('result' => 1);
 }

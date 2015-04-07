@@ -112,7 +112,7 @@ function _webfact_api_website_create($website_data) {
  * Array associative keyed by field name , value is value
  */
 function _webfact_api_website_retrieve_all($parameters) {
-
+  unset($parameters['token']);
   //create base query
   $query = new EntityFieldQuery();
   $query->entityCondition('entity_type', 'node')
@@ -140,7 +140,7 @@ function _webfact_api_website_retrieve_all($parameters) {
 /**
  * Returns a website
  */
-function _webfact_api_website_retrieve($nid) {
+function _webfact_api_website_retrieve($nid, $parameters) {
 
   $node = node_load($nid);
 

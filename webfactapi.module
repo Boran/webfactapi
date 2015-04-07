@@ -35,7 +35,7 @@ function _webfact_api_website_resource_access($op = 'view', $args = array()) {
       'owner_uid'
     );
     foreach ($created_required_data as $required_data) {
-      if (!array_key_exists($required_data, $args[0]) || !$args[0][$required_data]) {
+      if (!array_key_exists($required_data, $args['parameters']) || !$args['parameters'][$required_data]) {
         return services_error(t($required_data . ' is required'), 406);
       }
     }
@@ -62,12 +62,20 @@ function webfactapi_services_resources() {
           ),
           'callback' => '_webfact_api_website_retrieve',
           'args' => array(
-            array(
+            'nid' => array(
               'name' => 'nid',
               'optional' => FALSE,
               'source' => array('path' => 0),
               'type' => 'int',
               'description' => 'The nid of the website to get',
+            ),
+            'parameters' => array(
+              'name' => 'parameters',
+              'optional' => TRUE,
+              'type' => 'array',
+              'description' => 'Parameters array',
+              'default value' => array(),
+              'source' => array('param' => 'parameters'),
             ),
           ),
           'access callback' => '_webfact_api_website_resource_access',
@@ -82,8 +90,7 @@ function webfactapi_services_resources() {
           ),
           'callback' => '_webfact_api_website_retrieve_all',
           'args' => array(
-
-            array(
+            'parameters' => array(
               'name' => 'parameters',
               'optional' => TRUE,
               'type' => 'array',
@@ -104,14 +111,14 @@ function webfactapi_services_resources() {
           ),
           'callback' => '_webfact_api_website_update',
           'args' => array(
-            array(
+            'nid' => array(
               'name' => 'nid',
               'optional' => FALSE,
               'source' => array('path' => 0),
               'type' => 'int',
               'description' => 'The nid of the node to get',
             ),
-            array(
+            'parameters' => array(
               'name' => 'website data',
               'optional' => FALSE,
               'source' => 'data',
@@ -131,7 +138,7 @@ function webfactapi_services_resources() {
           ),
           'callback' => '_webfact_api_website_create',
           'args' => array(
-            array(
+            'parameters' => array(
               'name' => 'website data',
               'optional' => FALSE,
               'source' => 'data',
@@ -170,6 +177,7 @@ function webfactapi_test($test, $param) {
       );
 
       $result = drupal_http_request("$base_url/webfact_api/website", $options);
+//      dpm($result);
 
       break;
 
@@ -247,11 +255,11 @@ function webfactapi_test($test, $param) {
       break;
   }
 
-  krumo($result);
+//  krumo($result);
+//
+//  krumo(json_decode($result->data));
 
-  krumo(json_decode($result->data));
-
-  return $result->data;
+  return '';
 
 }
 
@@ -266,3 +274,43 @@ function webfactapi_rest_server_headers_parsed_alter(&$headers) {
   //$headers['Access-Control-Allow-Origin'] = "*";
 }
 
+/**
+ * Implements hook_services_authentication().
+ */
+function webfactapi_services_authentication_info() {
+  return array(
+    'title'                     => t('Webfact API authentication'),
+    'description'               => t('Custom protocol to allow secure API authorization'),
+    'authenticate_call'         => '_webfactapi_authenticate_call',
+  );
+}
+
+
+/**
+ * Authenticates a call.
+ *
+ * @param array $module
+ * @param array $controller
+ * @param array $args
+ *  The arguments that are being used to call the method
+ * @return string
+ *  Returns empty string if authenticated, or a error message if authentication fails.
+ */
+function _webfactapi_authenticate_call($module, $controller, $args) {
+  $error_message = '';
+
+  $params = $args['parameters'];
+  if (!isset($params['token'])) {
+    $error_message = 'No token.';
+    return $error_message;
+  }
+
+  $token = $params['token'];
+  unset($params['token']);
+  if (hash('md5', serialize($params)) != $token) {
+    $error_message = 'Token is not valid.';
+    return $error_message;
+  }
+
+  return $error_message;
+}

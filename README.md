@@ -1,5 +1,7 @@
 Exposes an api to interact with website nodes
 
+Webfact authentication needs to be enabled on `admin/structure/services/list/webfact_api`.
+
 API specifications :
 
     GET request - *webfactory_url*/webfact/website.json(all website), *webfactory_url*/webfact/website/*nid*.json (one website)

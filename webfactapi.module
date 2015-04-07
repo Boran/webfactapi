@@ -265,16 +265,6 @@ function webfactapi_test($test, $param) {
 
 
 /**
- * Implements function hook_rest_server_headers_parsed_alter
- * For the time being allow CORS from any domain
- */
-function webfactapi_rest_server_headers_parsed_alter(&$headers) {
-  drupal_add_http_header('Access-Control-Allow-Origin', '*');
-  //below isn't working
-  //$headers['Access-Control-Allow-Origin'] = "*";
-}
-
-/**
  * Implements hook_services_authentication().
  */
 function webfactapi_services_authentication_info() {

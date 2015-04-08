@@ -18,7 +18,7 @@ function webfactapi_menu() {
     'type' => MENU_CALLBACK, // no menu
   );
 
-  $items['admin/swisscom'] = array(
+  $items['admin/config/development/webfact'] = array(
     'title' => 'Webfact API settings',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('webfactapi_settings_form'),

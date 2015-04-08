@@ -9,6 +9,7 @@
  *
  */
 function _webfact_api_website_update($website_nid, $website_data) {
+  webfactapi_decode_incoming_params($website_data);
 
   //get the node
   $website_node = node_load($website_nid);
@@ -47,7 +48,7 @@ function _webfact_api_website_update($website_nid, $website_data) {
  *
  */
 function _webfact_api_website_create($website_data) {
-
+  webfactapi_decode_incoming_params($website_data);
 
   //get the template nid
   $template_nid = $website_data['template_id'];
@@ -112,7 +113,8 @@ function _webfact_api_website_create($website_data) {
  * Array associative keyed by field name , value is value
  */
 function _webfact_api_website_retrieve_all($parameters) {
-  unset($parameters['token']);
+  webfactapi_decode_incoming_params($parameters);
+
   //create base query
   $query = new EntityFieldQuery();
   $query->entityCondition('entity_type', 'node')
@@ -141,6 +143,7 @@ function _webfact_api_website_retrieve_all($parameters) {
  * Returns a website
  */
 function _webfact_api_website_retrieve($nid, $parameters) {
+  webfactapi_decode_incoming_params($parameters);
 
   $node = node_load($nid);
 

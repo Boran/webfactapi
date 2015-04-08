@@ -18,12 +18,40 @@ function webfactapi_menu() {
     'type' => MENU_CALLBACK, // no menu
   );
 
-  return $items;
+  $items['admin/swisscom'] = array(
+    'title' => 'Webfact API settings',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('webfactapi_settings_form'),
+    'access arguments' => array('administer webfactapi settings'),
+    'type' => MENU_NORMAL_ITEM,
+  );
 
+  return $items;
 }
+
+
+/**
+ * Implements hook_permission().
+ */
+function webfactapi_permission() {
+  return array(
+    'administer webfactapi settings' =>  array(
+      'title' => t('Administer Webfact API settings'),
+      'restrict access' => TRUE,
+    ),
+  );
+}
+
 
 /** Access callback */
 function _webfact_api_website_resource_access($op = 'view', $args = array()) {
+  if (isset($args['parameters'])) {
+    $params = $args['parameters'];
+    webfactapi_decode_incoming_params($params);
+  }
+  else {
+    $params = array();
+  }
 
   if ($op == 'create') {
     //check all required data is present
@@ -35,7 +63,7 @@ function _webfact_api_website_resource_access($op = 'view', $args = array()) {
       'owner_uid'
     );
     foreach ($created_required_data as $required_data) {
-      if (!array_key_exists($required_data, $args['parameters']) || !$args['parameters'][$required_data]) {
+      if (!array_key_exists($required_data, $params) || !$params[$required_data]) {
         return services_error(t($required_data . ' is required'), 406);
       }
     }
@@ -290,17 +318,182 @@ function _webfactapi_authenticate_call($module, $controller, $args) {
   $error_message = '';
 
   $params = $args['parameters'];
-  if (!isset($params['token'])) {
-    $error_message = 'No token.';
+
+  if (!isset($params['data'])) {
+    $error_message = 'No request data.';
+
     return $error_message;
   }
 
-  $token = $params['token'];
-  unset($params['token']);
-  if (hash('md5', serialize($params)) != $token) {
-    $error_message = 'Token is not valid.';
+  // Decrypt params using private key.
+  $private_key = webfactapi_get_private_key();
+  $decoded = urldecode($params['data']);
+
+  $json_encoded_data = '';
+  if (!openssl_private_decrypt($decoded, $json_encoded_data, $private_key))
+  {
+    $error_message = 'Failed to decrypt data.';
+
     return $error_message;
   }
+
+  $data = json_decode($json_encoded_data, true);
+
+  // Check that token is in place.
+  if (!isset($data['token'])) {
+    $error_message = 'No token.';
+
+    return $error_message;
+  }
+
+  // Encrypt token and verify that it matches the api key.
+  $api_key = webfactapi_get_api_key();
+  if ($api_key != webfactapi_api_key_encrypt($data['token'])) {
+    $error_message = 'Invalid token.';
+
+    return $error_message;
+  }
+
+  // Proceed with the request.
 
   return $error_message;
+}
+
+
+/**
+ * Webfact API form callback.
+ */
+function webfactapi_settings_form($form, &$form_state) {
+  $form['api_key'] = array(
+    '#type' => 'textfield',
+    '#title' => 'API key',
+    '#prefix' => '<div id="webfact-api-key">',
+    '#suffix' => '</div>',
+    '#disabled' => TRUE,
+  );
+
+  $form['generate_api_key'] = array(
+    '#type' => 'button',
+    '#value' => 'Generate API key',
+    '#ajax' => array(
+      'callback' => 'ajax_webfactapi_generate_api_key_callback',
+      'wrapper' => 'webfact-api-key',
+      'method' => 'replace',
+      'progress' => array(
+        'type' => 'throbber',
+      ),
+    ),
+  );
+
+  $form['public_key'] = array(
+    '#type' => 'textarea',
+    '#title' => 'Public key',
+    '#prefix' => '<div id="webfact-public-key">',
+    '#suffix' => '</div>',
+    '#description' => t('Copy that key into Nova Hub.'),
+    '#disabled' => TRUE,
+    '#rows' => 9,
+  );
+  $form['generate_key_pair'] = array(
+    '#type' => 'button',
+    '#value' => 'Generate key pair',
+    '#ajax' => array(
+      'callback' => 'ajax_webfactapi_generate_key_pair_callback',
+      'wrapper' => 'webfact-public-key',
+      'method' => 'replace',
+      'progress' => array(
+        'type' => 'throbber',
+      ),
+    ),
+  );
+
+  $private_key = webfactapi_get_private_key();
+  if ($private_key) {
+    $public_key = webfactapi_get_public_key($private_key);
+    if ($public_key) {
+      $form['public_key']['#value'] = $public_key;
+    }
+  }
+
+  return $form;
+}
+
+
+function ajax_webfactapi_generate_api_key_callback($form, &$form_state) {
+  $key = hash('sha256', substr(md5(microtime()), rand(0, 26), 5));
+  $encrypted_key = webfactapi_api_key_encrypt($key);
+  variable_set('webfact_api_key', $encrypted_key);
+
+  $form['api_key']['#value'] = $key;
+  $form['api_key']['#description'] = t('Copy that API key into Nova Hub. It will disappear if you reload the page.');
+
+  return $form['api_key'];
+}
+
+
+function ajax_webfactapi_generate_key_pair_callback($form, &$form_state) {
+  $form['public_key']['#value'] = webfactapi_generate_encryption_key_pair();
+
+  return $form['public_key'];
+}
+
+
+/**
+ * Encrypts a Webfact API key.
+ */
+function webfactapi_api_key_encrypt($key) {
+  return hash('sha256', $key . drupal_get_hash_salt());
+}
+
+
+function webfactapi_get_api_key() {
+  return variable_get('webfact_api_key', webfactapi_api_key_encrypt(''));
+}
+
+function webfactapi_generate_encryption_key_pair() {
+  $private_key = openssl_pkey_new(array(
+    'private_key_bits' => 2048,      // Size of Key.
+    'private_key_type' => OPENSSL_KEYTYPE_RSA,
+  ));
+
+  $private_key_string = '';
+  openssl_pkey_export($private_key, $private_key_string);
+
+  variable_set('webfactapi_private_key', $private_key_string);
+
+  $public_key = webfactapi_get_public_key($private_key);
+
+  // Free the private Key.
+  openssl_free_key($private_key);
+
+  return $public_key;
+}
+
+
+function webfactapi_get_public_key($private_key) {
+  $key = openssl_pkey_get_details($private_key);
+
+  return $key['key'];
+}
+
+
+function webfactapi_get_private_key() {
+  $key_string = variable_get('webfactapi_private_key', null);
+
+  return openssl_pkey_get_private($key_string);
+}
+
+
+function webfactapi_decode_incoming_params(&$params) {
+  $private_key = webfactapi_get_private_key();
+  $decoded = urldecode($params['data']);
+
+  $json_encoded_data = '';
+  openssl_private_decrypt($decoded, $json_encoded_data, $private_key);
+
+  $data = json_decode($json_encoded_data, true);
+
+  unset($data['token']);
+
+  $params = $data;
 }

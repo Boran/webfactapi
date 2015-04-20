@@ -57,6 +57,10 @@ function _webfact_api_website_update($website_nid, $website_data) {
     $cmd = '';
     watchdog('webfactapi', "script could not be run, missing script name");
   }
+  else {
+    $website_data_print = print_r($website_data, 1);
+    watchdog('webfactapi', "script could not be run:<br>sript name: {$script_name}<br>script location: {$script_location}<br>website data:<pre>{$website_data_print}</pre>");
+  }
 
   //return result
   return array('result' => 1);

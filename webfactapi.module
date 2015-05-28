@@ -18,7 +18,7 @@ function webfactapi_menu() {
     'type' => MENU_CALLBACK, // no menu
   );
 
-  $items['admin/config/development/webfact'] = array(
+  $items['admin/config/development/webfactapi'] = array(
     'title' => 'Webfact API settings',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('webfactapi_settings_form'),
@@ -390,7 +390,7 @@ function webfactapi_settings_form($form, &$form_state) {
     '#title' => 'Public key',
     '#prefix' => '<div id="webfact-public-key">',
     '#suffix' => '</div>',
-    '#description' => t('Copy that key into Nova Hub.'),
+    '#description' => t('Copy that key into to the website which will call this API.'),
     '#disabled' => TRUE,
     '#rows' => 9,
   );

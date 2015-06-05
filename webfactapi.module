@@ -452,7 +452,7 @@ function webfactapi_get_api_key() {
 
 function webfactapi_generate_encryption_key_pair() {
   $private_key = openssl_pkey_new(array(
-    'private_key_bits' => 2048,      // Size of Key.
+    'private_key_bits' => 1024,      // Size of Key.
     'private_key_type' => OPENSSL_KEYTYPE_RSA,
   ));
 
@@ -489,11 +489,30 @@ function webfactapi_decode_incoming_params(&$params) {
   $decoded = urldecode($params['data']);
 
   $json_encoded_data = '';
-  openssl_private_decrypt($decoded, $json_encoded_data, $private_key);
+  // Data is too big to use with this key size so it need to be splited and
+  // encrypt piece by piece.
+  $json_encoded_data = webfactapi_decrypt_pieces($decoded, $private_key);
 
   $data = json_decode($json_encoded_data, true);
 
   unset($data['token']);
 
   $params = $data;
+}
+
+
+function webfactapi_decrypt_pieces($source, $private_key) {
+
+  $maxlength = 128;
+
+  $output = '';
+
+  while($source) {
+    $input = substr($source, 0, $maxlength);
+    $source = substr($source, $maxlength);
+    openssl_private_decrypt($input, $out, $private_key);
+    $output .= $out;
+  }
+  return $output;
+
 }

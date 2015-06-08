@@ -364,8 +364,7 @@ function _webfactapi_authenticate_call($module, $controller, $args) {
  * Webfact API form callback.
  */
 function webfactapi_settings_form($form, &$form_state) {
-  drupal_add_library('system', 'drupal.ajax');
-
+  /*
   $form['api_key'] = array(
     '#type' => 'textfield',
     '#title' => 'API key',
@@ -373,10 +372,13 @@ function webfactapi_settings_form($form, &$form_state) {
     '#suffix' => '</div>',
     '#disabled' => TRUE,
   );
+  */
 
   $form['generate_api_key'] = array(
-    '#type' => 'button',
+    '#type' => 'submit',
     '#value' => 'Generate API key',
+    '#submit' => array('webfactapi_generate_api_key_callback'),
+    /*
     '#ajax' => array(
       'callback' => 'ajax_webfactapi_generate_api_key_callback',
       'wrapper' => 'webfact-api-key',
@@ -385,6 +387,7 @@ function webfactapi_settings_form($form, &$form_state) {
         'type' => 'throbber',
       ),
     ),
+    */
   );
 
   $form['public_key'] = array(
@@ -397,8 +400,10 @@ function webfactapi_settings_form($form, &$form_state) {
     '#rows' => 9,
   );
   $form['generate_key_pair'] = array(
-    '#type' => 'button',
+    '#type' => 'submit',
     '#value' => 'Generate key pair',
+    '#submit' => array('webfactapi_generate_key_pair_callback'),
+    /*
     '#ajax' => array(
       'callback' => 'ajax_webfactapi_generate_key_pair_callback',
       'wrapper' => 'webfact-public-key',
@@ -407,6 +412,7 @@ function webfactapi_settings_form($form, &$form_state) {
         'type' => 'throbber',
       ),
     ),
+    */
   );
 
   $private_key = webfactapi_get_private_key();
@@ -427,9 +433,17 @@ function ajax_webfactapi_generate_api_key_callback($form, &$form_state) {
   variable_set('webfact_api_key', $encrypted_key);
 
   $form['api_key']['#value'] = $key;
-  $form['api_key']['#description'] = t('Copy that API key into Nova Hub. It will disappear if you reload the page.');
+  $form['api_key']['#description'] = t('Copy that API key into your page configuration. It will disappear if you reload the page.');
 
   return $form['api_key'];
+}
+
+function webfactapi_generate_api_key_callback($form, &$form_state) {
+  $key = hash('sha256', substr(md5(microtime()), rand(0, 26), 5));
+  $encrypted_key = webfactapi_api_key_encrypt($key);
+  variable_set('webfact_api_key', $encrypted_key);
+  drupal_set_message(t('Copy that API key into your page configuration. It will disappear if you reload the page:'));
+  drupal_set_message($key);
 }
 
 
@@ -437,6 +451,10 @@ function ajax_webfactapi_generate_key_pair_callback($form, &$form_state) {
   $form['public_key']['#value'] = webfactapi_generate_encryption_key_pair();
 
   return $form['public_key'];
+}
+
+function webfactapi_generate_key_pair_callback($form, &$form_state) {
+  webfactapi_generate_encryption_key_pair();
 }
 
 

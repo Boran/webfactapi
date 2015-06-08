@@ -364,6 +364,8 @@ function _webfactapi_authenticate_call($module, $controller, $args) {
  * Webfact API form callback.
  */
 function webfactapi_settings_form($form, &$form_state) {
+  drupal_add_library('system', 'drupal.ajax');
+
   $form['api_key'] = array(
     '#type' => 'textfield',
     '#title' => 'API key',

@@ -21,13 +21,23 @@ function _webfact_api_website_update($website_nid, $website_data) {
 
   //update website node
   $website_update_fields = array('hostname'=>'field_hostname', 'category'=>'field_category', 'site_email'=>'field_site_email', 'public'=>'field_public', 'owner_uid'=>'field_site_owner_uid');
+  $newname='';
 
   //loop through possible updatable website fields
   foreach ($website_update_fields as $website_update_field_key =>$website_update_field_name) {
     //if api call sets data
+
     if (isset($website_data[$website_update_field_key])) {
-      //set field names data
-      $website_node->{$website_update_field_name}['und'][0]['value'] = $website_data[$website_update_field_key];
+
+      if ($website_update_field_key == 'hostname') {
+         // if the hostname is changed, special handling, see below
+         $newname=$website_data[$website_update_field_key];
+         $oldname=$website_node->{$website_update_field_name}['und'][0]['value'];
+      }
+      else {
+        //set field names data
+        $website_node->{$website_update_field_name}['und'][0]['value'] = $website_data[$website_update_field_key];
+      }
     }
   }
   if (isset($website_data['node_title'])) {
@@ -36,6 +46,25 @@ function _webfact_api_website_update($website_nid, $website_data) {
 
   //save node
   node_save($website_node);
+
+  // if the hostname is changed, the container needs to be renamed and rebuild
+  if (strlen($newname > 0) ) {
+    try {
+      $w = new WebfactController(0, $website_nid);
+      if ($w) {
+        $w->renameContainer($oldname, $newname, 0); // verbose=0
+        $w->rebuildContainer($newname, 0);    // create new docker env
+        #$website->status = $w->getStatus($node->nid);
+        #$website->build_status = $w->getContainerBuildStatus();
+        #$website->container_status = $w->getContainerStatus();
+      }
+    } catch (Exception $e) {
+      drupal_set_message($e->getMessage(), 'error');
+      // what else do we do on error? Throw it further?
+      // echo 'Caught exception: ',  $e->getMessage(), "\n";
+    }
+  }
+
 
   //Adds the posibility to add scripts to your drupal project
 

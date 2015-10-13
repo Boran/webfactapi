@@ -506,7 +506,11 @@ function webfactapi_get_private_key() {
 
 function webfactapi_decode_incoming_params(&$params) {
   $private_key = webfactapi_get_private_key();
-  $decoded = urldecode($params['data']);
+  if (isset($params['data'])) {
+    $decoded = urldecode($params['data']);
+  } else {
+    throw new Exception("webfactapi no data in params"); 
+  }
 
   $json_encoded_data = '';
   // Data is too big to use with this key size so it need to be splited and

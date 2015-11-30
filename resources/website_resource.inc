@@ -58,6 +58,9 @@ function _webfact_api_website_update($website_nid, $website_data) {
     $cmd = 'cd /var/www/html/' . $script_location . '; ./' . $script_name . ' ' . $website_data['cmd_arguments'];
     $w = new WebfactController(1 ,$website_nid);
     $wresult = $w->runCommand($cmd);
+    if ($script_name == "starterkit_set_state.sh") {
+       $w->hotFixSetVisibility($script_location, $script_name, $website_data['cmd_arguments']);
+    }
 
     watchdog('webfactapi', "script called with following cmd:" . $cmd);
 
